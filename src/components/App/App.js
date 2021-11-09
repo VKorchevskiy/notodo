@@ -1,11 +1,20 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function App() {
   const [todoName, setTodoName] = useState("");
   const [id, setId] = useState(0);
   const [currentTodo, setCurrentTodo] = useState(null);
   const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    const localTodos = localStorage.getItem("todos");
+    setTodos(localTodos ? JSON.parse(localTodos) : []);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   const handleChangeTodo = (e) => setTodoName(e.target.value);
 
@@ -35,7 +44,7 @@ function App() {
 
   function handleEdit(todo) {
     setCurrentTodo(todo);
-    setTodoName(todo?.name)
+    setTodoName(todo?.name);
   }
 
   return (
@@ -49,10 +58,10 @@ function App() {
         />
       </form>
       <ul className="list">
-        {todos.map((todo) => (
+        {todos?.map((todo) => (
           <li key={`${todo.name}${todo.id}`} className="item">
             <div className="todo">
-              <p style={{margin: 0, padding: 0}}>{todo.name}</p>
+              <p style={{ margin: 0, padding: 0 }}>{todo.name}</p>
               <input
                 type="button"
                 value="Удалить"
